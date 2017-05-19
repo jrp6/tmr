@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [[ $# -ne 1 ]]
+then
+    echo "Usage: tmr get; tmr submit"
+    exit
+fi
+
+if [[ -z $XDG_HOME_CONFIG ]]
+then
+    CONF_FILE="$HOME/.config/tmr"
+else
+    CONF_FILE="$XDG_HOME_CONFIG/tmr"
+fi
+
+if [[ ! -f $CONF_FILE ]]
+then
+    echo "Please create $CONF_FILE"
+    exit
+fi
+source $CONF_FILE
+
+case "$1" in
+    "get" )
+        mv "$SAVEFILE" "$SAVEFILE.old"
+        curl "http://multiplayerrobot.com/api/Diplomacy/GetLatestSaveFileBytes?authKey=$AUTH_KEY&gameId=$GAME_ID" -o "$SAVEFILE"
+        ;;
+    "submit" )
+        PLAYER_ID=$(curl -s "http://multiplayerrobot.com/api/Diplomacy/AuthenticateUser?authKey=$AUTH_KEY")
+        TURN_ID=$(curl -s "http://multiplayerrobot.com/api/Diplomacy/GetGamesAndPlayers?playerIDText=$PLAYER_ID&authKey=$AUTH_KEY" \
+            | jq ".Games | map(select( .GameId == 25258))[0].CurrentTurn.TurnId")
+        curl --data-binary "@$SAVEFILE" "http://multiplayerrobot.com/api/Diplomacy/SubmitTurn?authKey=$AUTH_KEY&turnId=$TURN_ID"
+        ;;
+esac
