@@ -28,7 +28,7 @@ case "$1" in
     "submit" )
         PLAYER_ID=$(curl -s "http://multiplayerrobot.com/api/Diplomacy/AuthenticateUser?authKey=$AUTH_KEY")
         TURN_ID=$(curl -s "http://multiplayerrobot.com/api/Diplomacy/GetGamesAndPlayers?playerIDText=$PLAYER_ID&authKey=$AUTH_KEY" \
-            | jq ".Games | map(select( .GameId == 25258))[0].CurrentTurn.TurnId")
+            | jq ".Games | map(select( .GameId == $GAME_ID))[0].CurrentTurn.TurnId")
         curl --data-binary "@$SAVEFILE" "http://multiplayerrobot.com/api/Diplomacy/SubmitTurn?authKey=$AUTH_KEY&turnId=$TURN_ID"
         ;;
 esac
