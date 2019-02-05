@@ -1,3 +1,4 @@
+BASE_URL="http://multiplayerrobot.com"
 SAVEFILE="$HOME/.local/share/Aspyr/Sid Meier's Civilization 5/Saves/hotseat/tmr.Civ5Save"
 AUTH_KEY="ABCDEFGHJIKL"
 GAME_ID=25258

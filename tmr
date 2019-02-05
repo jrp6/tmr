@@ -23,12 +23,13 @@ source $CONF_FILE
 case "$1" in
     "get" )
         mv "$SAVEFILE" "$SAVEFILE.old"
-        curl "http://multiplayerrobot.com/api/Diplomacy/GetLatestSaveFileBytes?authKey=$AUTH_KEY&gameId=$GAME_ID" -o "$SAVEFILE"
+        curl "$BASE_URL/api/Diplomacy/GetLatestSaveFileBytes?authKey=$AUTH_KEY&gameId=$GAME_ID" -o "$SAVEFILE"
         ;;
     "submit" )
-        PLAYER_ID=$(curl -s "http://multiplayerrobot.com/api/Diplomacy/AuthenticateUser?authKey=$AUTH_KEY")
-        TURN_ID=$(curl -s "http://multiplayerrobot.com/api/Diplomacy/GetGamesAndPlayers?playerIDText=$PLAYER_ID&authKey=$AUTH_KEY" \
+        PLAYER_ID=$(curl -s "$BASE_URL/api/Diplomacy/AuthenticateUser?authKey=$AUTH_KEY")
+        TURN_ID=$(curl -s "$BASE_URL/api/Diplomacy/GetGamesAndPlayers?playerIDText=$PLAYER_ID&authKey=$AUTH_KEY" \
             | jq ".Games | map(select( .GameId == $GAME_ID))[0].CurrentTurn.TurnId")
-        curl --data-binary "@$SAVEFILE" "http://multiplayerrobot.com/api/Diplomacy/SubmitTurn?authKey=$AUTH_KEY&turnId=$TURN_ID"
+        curl -F "turnId=$TURN_ID" -F "isCompressed=False" -F "authKey=$AUTH_KEY" -F "saveFileUpload=@$SAVEFILE" \
+             "$BASE_URL/Game/UploadSaveClient"
         ;;
 esac
