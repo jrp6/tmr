@@ -6,19 +6,19 @@ then
     exit
 fi
 
-if [[ -z $XDG_HOME_CONFIG ]]
+if [[ -z "$XDG_HOME_CONFIG" ]]
 then
     CONF_FILE="$HOME/.config/tmr"
 else
     CONF_FILE="$XDG_HOME_CONFIG/tmr"
 fi
 
-if [[ ! -f $CONF_FILE ]]
+if [[ ! -f "$CONF_FILE" ]]
 then
     echo "Please create $CONF_FILE"
     exit
 fi
-source $CONF_FILE
+source "$CONF_FILE"
 
 case "$1" in
     "get" )
